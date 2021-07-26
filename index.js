@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const errorLogger = require("./utils/errorLogger.js");
-const userRoutes = require("./routes/user.routes");
+const studentRoutes = require("./routes/student.routes");
 
 const app = express();
 
@@ -12,7 +12,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use("/user", userRoutes);
+app.use("/student", studentRoutes);
 
 app.use(errorLogger);
 
