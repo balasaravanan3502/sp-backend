@@ -1,45 +1,45 @@
 const userModel = require("../models/user.model");
 const { ApiError } = require("../objectCreator/objectCreator");
 
+const bcrypt = require("bcryptjs");
+
 const userService = {};
 
 userService.createUser = (userDetails) => {
   try {
     return userModel
-      .createUser(userDetails)
-      .then((response) => ({ message: `User Created` }));
+      .getUserByEmail(userDetails.email)
+      .then((response) => {
+        if (response === undefined) return true;
+        throw new ApiError("User Already Exists", 409);
+      })
+      .then((canCreate) => {
+        return userModel
+          .createUser(userDetails)
+          .then((response) => ({ message: `User Created`, code: 200 }));
+      });
   } catch (statusCd) {
     throw new ApiError("Unknown error", statusCd);
   }
 };
 
-userService.getUsers = () => {
+userService.loginUser = async (loginDetails) => {
   try {
-    return userModel.getUsers().then((response) => {
-      return response;
-    });
-  } catch (statusCd) {
-    throw new ApiError("Unknown error", statusCd);
-  }
-};
+    const userData = await userModel.getUserByEmail(loginDetails.email);
+    if (!userData) throw 404;
+    else {
+      const isNotMatch = await bcrypt.compare(
+        loginDetails.password,
+        userData.password
+      );
 
-userService.getUserById = (userId) => {
-  try {
-    return userModel.getUserById(userId).then((response) => {
-      return response;
-    });
+      if (!isNotMatch) throw 404;
+      else {
+        return { code: 200, message: "Login" };
+      }
+    }
   } catch (statusCd) {
-    throw new ApiError("Unknown error", statusCd);
-  }
-};
-
-userService.deleteUserById = (userId) => {
-  try {
-    return userModel
-      .deleteUserById(userId)
-      .then((response) => ({ message: `Deleted Created` }));
-  } catch (statusCd) {
-    throw new ApiError("Unknown error", statusCd);
+    throw new ApiError("Invalid Email or Password", statusCd);
   }
 };
 

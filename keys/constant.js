@@ -1,5 +1,5 @@
 const COLLECTION_NAME = {
-  USERS: "Users",
+  STUDENTS: "Students",
 };
 
 const HOST = {

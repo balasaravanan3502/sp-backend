@@ -3,16 +3,16 @@ const express = require("express");
 const usersService = require("../service/user.service");
 const userRouter = express.Router();
 
-userRouter.get("/users", (req, res, next) => {
+userRouter.post("/signUp", (req, res, next) => {
   usersService
-    .getUsers()
+    .createUser(req.body)
     .then((response) => res.send(response))
     .catch((error) => next(error));
 });
 
-userRouter.post("/users", (req, res, next) => {
+userRouter.post("/login", (req, res, next) => {
   usersService
-    .createUser(req.body)
+    .loginUser(req.body)
     .then((response) => res.send(response))
     .catch((error) => next(error));
 });
