@@ -1,5 +1,7 @@
 const COLLECTION_NAME = {
   STUDENTS: "Students",
+  CLASS: "Class",
+  STAFF: "Staff",
 };
 
 const HOST = {

@@ -16,9 +16,30 @@ const studentObj = {
   password: { type: String, required: true },
 };
 
+const staffObj = {
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  classes: { type: Array },
+};
+
+const classObj = {
+  name: { type: String, required: true },
+  students: { type: Array },
+  staff: { type: Array },
+  works: { type: Array },
+};
+
 const studentsSchema = new Schema(studentObj, {
   collection: "Students",
-  timestamps: true,
+});
+
+const staffSchema = new Schema(staffObj, {
+  collection: "Staff",
+});
+
+const classSchema = new Schema(classObj, {
+  collection: "Class",
 });
 
 connection.getCollection = (collectionName) => {
@@ -33,6 +54,10 @@ connection.getCollection = (collectionName) => {
       switch (collectionName) {
         case COLLECTION_NAME.STUDENTS:
           return db.model(collectionName, studentsSchema);
+        case COLLECTION_NAME.STAFF:
+          return db.model(collectionName, staffSchema);
+        case COLLECTION_NAME.CLASS:
+          return db.model(collectionName, classSchema);
       }
     })
     .catch((err) => {
