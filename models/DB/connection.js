@@ -30,6 +30,12 @@ const classObj = {
   works: { type: Array },
 };
 
+const questionObj = {
+  createdBy: { type: String, required: true },
+  question: { type: String, required: true },
+  comments: { type: Array },
+};
+
 const studentsSchema = new Schema(studentObj, {
   collection: "Students",
 });
@@ -42,6 +48,11 @@ const classSchema = new Schema(classObj, {
   collection: "Class",
 });
 
+const questionSchema = new Schema(questionObj, {
+  collection: "Question",
+  timestamps: true,
+});
+
 connection.getCollection = (collectionName) => {
   const DB_HOST = "mongodb://localhost:27017";
   return mongoose
@@ -50,7 +61,6 @@ connection.getCollection = (collectionName) => {
       useUnifiedTopology: true,
     })
     .then((db) => {
-      // eslint-disable-next-line default-case
       switch (collectionName) {
         case COLLECTION_NAME.STUDENTS:
           return db.model(collectionName, studentsSchema);
@@ -58,6 +68,8 @@ connection.getCollection = (collectionName) => {
           return db.model(collectionName, staffSchema);
         case COLLECTION_NAME.CLASS:
           return db.model(collectionName, classSchema);
+        case COLLECTION_NAME.QUESTION:
+          return db.model(collectionName, questionSchema);
       }
     })
     .catch((err) => {

@@ -4,7 +4,6 @@ const classRouter = express.Router();
 const classService = require("../service/class.service");
 
 classRouter.post("/create-class", (req, res, next) => {
-  console.log("asdasd");
   classService
     .createClass(req.body)
     .then((response) => res.send(response))

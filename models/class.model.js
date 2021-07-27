@@ -24,11 +24,4 @@ classModel.createClass = (classDetails) => {
 //     .then((response) => response);
 // };
 
-// userModel.deleteUserById = (userId) => {
-//   return collection
-//     .getCollection(COLLECTION_NAME.classS)
-//     .then((model) => model.deleteOne({ _id: ObjectId(userId) }))
-//     .then((response) => response);
-// };
-
 module.exports = classModel;
