@@ -1,13 +1,8 @@
 const express = require("express");
 const classRouter = express.Router();
 
-const classService = require("../service/class.service");
+const classController = require("../controllers/class-controller");
 
-classRouter.post("/create-class", (req, res, next) => {
-  classService
-    .createClass(req.body)
-    .then((response) => res.send(response))
-    .catch((error) => next(error));
-});
+classRouter.post("create-class", classController.createClass);
 
 module.exports = classRouter;

@@ -1,14 +1,9 @@
 const express = require("express");
 
-const studentsService = require("../service/student.service");
+const studentController = require("../controllers/student-controller");
 const studentRouter = express.Router();
 
-studentRouter.post("/signUp", (req, res, next) => {
-  studentsService
-    .createStudent(req.body)
-    .then((response) => res.send(response))
-    .catch((error) => next(error));
-});
+studentRouter.post("/create-student", studentController.createStudent);
 
 studentRouter.post("/login", (req, res, next) => {
   studentsService

@@ -1,27 +1,12 @@
-const collection = require("./DB/connection");
-const { COLLECTION_NAME } = require("../keys/constant");
+const mongoose = require("mongoose");
 
-const staffModel = {};
+const Schema = mongoose.Schema;
 
-staffModel.createStaff = (staffDetails) => {
-  return collection
-    .getCollection(COLLECTION_NAME.STAFF)
-    .then((model) => model.create(staffDetails))
-    .then((response) => response);
-};
+const staffSchema = new Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  classes: { type: Array },
+});
 
-// userModel.getstaffS = () => {
-//   return collection
-//     .getCollection(COLLECTION_NAME.staffS)
-//     .then((model) => model.find())
-//     .then((response) => response);
-// };
-
-// userModel.getUserById = (userId) => {
-//   return collection
-//     .getCollection(COLLECTION_NAME.staffS)
-//     .then((model) => model.find({ _id: ObjectId(userId) }))
-//     .then((response) => response);
-// };
-
-module.exports = staffModel;
+module.exports = mongoose.model("Staff", staffSchema);

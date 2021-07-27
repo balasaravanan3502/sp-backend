@@ -1,8 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const mongoose = require("mongoose");
 
-const errorLogger = require("./utils/errorLogger.js");
 const studentRoutes = require("./routes/student.routes");
 const classRoutes = require("./routes/class.routes");
 const staffRoutes = require("./routes/staff.routes");
@@ -23,7 +23,13 @@ app.use("/staff", staffRoutes);
 
 app.use("/question", questionRoutes);
 
-app.use(errorLogger);
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT);
+mongoose
+  .connect(
+    `mongodb+srv://vpbs:spdatabase123@cluster0.fddbp.mongodb.net/sp-database?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    app.listen(5000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });

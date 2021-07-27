@@ -1,13 +1,12 @@
-const collection = require("./DB/connection");
-const { COLLECTION_NAME } = require("../keys/constant");
+const mongoose = require("mongoose");
 
-const questionModel = {};
+const Schema = mongoose.Schema;
 
-questionModel.createQuestion = (questionDetails) => {
-  return collection
-    .getCollection(COLLECTION_NAME.QUESTION)
-    .then((model) => model.create(questionDetails))
-    .then((response) => response);
-};
+const questionSchema = new Schema({
+  name: { type: String, required: true },
+  students: { type: Array },
+  staff: { type: Array },
+  works: { type: Array },
+});
 
-module.exports = questionModel;
+module.exports = mongoose.model("Question", questionSchema);
