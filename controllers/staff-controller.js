@@ -3,7 +3,6 @@ const HttpError = require("../models/http-error");
 const bcrypt = require("bcryptjs");
 
 const createStaff = async (req, res, next) => {
-  console.log("asd");
   let staffDetails = req.body;
   let isNewStaff;
   try {
