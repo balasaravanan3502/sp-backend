@@ -1,7 +1,7 @@
 const Student = require("../models/student.model");
 const Class = require("../models/class.model");
+const HttpError = require("../models/http.error");
 
-const HttpError = require("../models/http-error");
 const bcrypt = require("bcryptjs");
 
 const createStudent = async (req, res, next) => {

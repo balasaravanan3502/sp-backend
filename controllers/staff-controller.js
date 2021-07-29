@@ -1,7 +1,7 @@
 const Staff = require("../models/staff.model");
 const Class = require("../models/class.model");
-const HttpError = require("../models/http-error");
 const bcrypt = require("bcryptjs");
+const HttpError = require("../models/http.error");
 
 const createStaff = async (req, res, next) => {
   let staffDetails = req.body;

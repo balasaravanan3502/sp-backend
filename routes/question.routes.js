@@ -5,4 +5,6 @@ const questionRouter = express.Router();
 
 questionRouter.post("/create-question", questionController.createQuestion);
 
+questionRouter.post("/add-comment", questionController.addComment);
+
 module.exports = questionRouter;

@@ -1,4 +1,5 @@
 const Question = require("../models/question.model");
+const HttpError = require("../models/http.error");
 
 const createQuestion = async (req, res, next) => {
   let details = req.body;
@@ -31,6 +32,29 @@ const createQuestion = async (req, res, next) => {
 
 const addComment = async (req, res, next) => {
   questionDetails = req.body;
+  let question;
+
+  try {
+    question = await Question.findById(questionDetails.questionId);
+  } catch (err) {
+    const error = new HttpError("Please try again later.", 500);
+    return next(error);
+  }
+
+  try {
+    question.comments.push(questionDetails.comment);
+
+    question.save();
+  } catch (err) {
+    const error = new HttpError("Please try again later.", 500);
+    return next(error);
+  }
+
+  res.status(201).json({
+    code: "200",
+    questionId: question.id,
+  });
 };
 
 exports.createQuestion = createQuestion;
+exports.addComment = addComment;
