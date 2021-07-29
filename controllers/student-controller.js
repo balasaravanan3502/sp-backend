@@ -1,4 +1,6 @@
 const Student = require("../models/student.model");
+const Class = require("../models/class.model");
+
 const HttpError = require("../models/http-error");
 const bcrypt = require("bcryptjs");
 
@@ -35,8 +37,16 @@ const createStudent = async (req, res, next) => {
   }
 
   const createdStudent = Student(studentDetails);
-
+  let studentClass;
   try {
+    studentClass = await Class.findOne({ name: studentDetails.className });
+    studentClass.students.push({
+      id: createdStudent.id,
+      name: studentDetails.name,
+    });
+
+    await studentClass.save();
+    createdStudent.classId = studentClass.id;
     await createdStudent.save();
   } catch (err) {
     const error = new HttpError(
@@ -46,6 +56,7 @@ const createStudent = async (req, res, next) => {
     return next(error);
   }
   res.status(201).json({
+    code: "200",
     userId: createdStudent.id,
     email: createdStudent.email,
     role: "student",

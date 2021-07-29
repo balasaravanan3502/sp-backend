@@ -1,4 +1,5 @@
 const Staff = require("../models/staff.model");
+const Class = require("../models/class.model");
 const HttpError = require("../models/http-error");
 const bcrypt = require("bcryptjs");
 
@@ -46,10 +47,46 @@ const createStaff = async (req, res, next) => {
     return next(error);
   }
   res.status(201).json({
+    code: "200",
     userId: createdStaff.id,
     email: createdStaff.email,
     role: "staff",
   });
 };
+
+const staffJoinClass = async (req, res, next) => {
+  let staffDetails = req.body;
+  let isClass;
+  let staff;
+  console.log(staffDetails);
+  try {
+    isClass = await Class.findOne({ name: staffDetails.className });
+    staff = await Staff.findById(staffDetails.id);
+    let classes = staff.classes;
+    if (!classes.includes(isClass.id) & !isClass.staff.includes(staff.id)) {
+      staff.classes.push(isClass.id);
+
+      isClass.staff.push(staff.id);
+
+      isClass.save();
+
+      staff.save();
+    }
+  } catch {
+    console.log("asdzcx");
+    const error = new HttpError(
+      "Signing up failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({
+    code: "200",
+    status: "Added",
+  });
+};
+
+exports.staffJoinClass = staffJoinClass;
 
 exports.createStaff = createStaff;

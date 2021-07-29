@@ -1,12 +1,8 @@
 const express = require("express");
+const questionController = require("../controllers/question-controller");
 
 const questionRouter = express.Router();
 
-questionRouter.post("/create-question", (req, res, next) => {
-  questionService
-    .createQuestion(req.body)
-    .then((response) => res.send(response))
-    .catch((error) => next(error));
-});
+questionRouter.post("/create-question", questionController.createQuestion);
 
 module.exports = questionRouter;
