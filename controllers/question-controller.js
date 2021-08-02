@@ -42,7 +42,10 @@ const addComment = async (req, res, next) => {
   }
 
   try {
-    question.comments.push(questionDetails.comment);
+    question.comments.push({
+      comment: questionDetails.comment,
+      time: questionDetails.time,
+    });
 
     question.save();
   } catch (err) {
