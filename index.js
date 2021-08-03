@@ -7,6 +7,7 @@ const studentRoutes = require("./routes/student.routes");
 const classRoutes = require("./routes/class.routes");
 const staffRoutes = require("./routes/staff.routes");
 const questionRoutes = require("./routes/question.routes");
+const workRoutes = require("./routes/work.routes");
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use("/class", classRoutes);
 app.use("/student", studentRoutes);
 
 app.use("/staff", staffRoutes);
+
+app.use("/work", workRoutes);
 
 app.use("/question", questionRoutes);
 
