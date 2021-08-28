@@ -1,7 +1,7 @@
 const Material = require("../models/material.model");
 const HttpError = require("../models/http.error");
 
-const createMaterial = async (req, res, next) => {
+const addMaterial = async (req, res, next) => {
   let materialDetails = req.body;
   let isNewMaterial;
   try {
@@ -30,7 +30,4 @@ const createMaterial = async (req, res, next) => {
   });
 };
 
-
-const fetchMaterial
-
-exports.createMaterial = createMaterial;
+exports.addMaterial = addMaterial;

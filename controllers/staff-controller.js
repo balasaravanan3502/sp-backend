@@ -87,6 +87,45 @@ const staffJoinClass = async (req, res, next) => {
   });
 };
 
+const loginStaff = async (req, res, next) => {
+  let staffDetails = req.body;
+  let staff;
+  try {
+    staff = await Staff.findOne({ email: staffDetails.email });
+  } catch {
+    const error = new HttpError("Login failed, please try again later.", 500);
+    return next(error);
+  }
+
+  if (!staff) {
+    const error = new HttpError(
+      "User exists already, please login instead.",
+      500
+    );
+    return next(error);
+  }
+  let result;
+  try {
+    result = await bcrypt.compare(staffDetails.password, staff.password);
+  } catch {
+    const error = new HttpError("Login failed, please try again later.", 500);
+    return next(error);
+  }
+
+  if (result) {
+    res.status(200).json({
+      code: "200",
+      email: staff.email,
+      role: "staff",
+    });
+  } else {
+    const error = new HttpError("Invalid Email or password.", 500);
+    return next(error);
+  }
+};
+
 exports.staffJoinClass = staffJoinClass;
 
 exports.createStaff = createStaff;
+
+exports.loginStaff = loginStaff;

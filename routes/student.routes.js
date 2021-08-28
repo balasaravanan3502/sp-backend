@@ -5,12 +5,7 @@ const studentRouter = express.Router();
 
 studentRouter.post("/create-student", studentController.createStudent);
 
-studentRouter.post("/login", (req, res, next) => {
-  studentsService
-    .loginStudent(req.body)
-    .then((response) => res.send(response))
-    .catch((error) => next(error));
-});
+studentRouter.post("/student-login", studentController.loginStudent);
 
 // studentRouter.get("/students/", (req, res, next) => {
 //   studentsService

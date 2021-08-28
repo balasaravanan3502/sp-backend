@@ -7,6 +7,7 @@ const staffSchema = new Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   classes: { type: Array },
+  gmail: { type: String },
 });
 
 module.exports = mongoose.model("Staff", staffSchema);

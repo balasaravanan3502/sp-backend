@@ -8,13 +8,13 @@ const classRoutes = require("./routes/class.routes");
 const staffRoutes = require("./routes/staff.routes");
 const questionRoutes = require("./routes/question.routes");
 const workRoutes = require("./routes/work.routes");
+const materialRoutes = require("./routes/material.routes");
 
 const app = express();
 
 app.use(cors());
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.use("/class", classRoutes);
 
@@ -26,12 +26,14 @@ app.use("/work", workRoutes);
 
 app.use("/question", questionRoutes);
 
+app.use("/material", materialRoutes);
+
 mongoose
   .connect(
-    `mongodb+srv://vpbs:spdatabase123@cluster0.fddbp.mongodb.net/sp-database?retryWrites=true&w=majority`
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.fddbp.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
   )
   .then(() => {
-    app.listen(5000);
+    app.listen(process.env.PORT || 5000);
   })
   .catch((err) => {
     console.log(err);

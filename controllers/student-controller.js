@@ -44,7 +44,7 @@ const createStudent = async (req, res, next) => {
       id: createdStudent.id,
       name: studentDetails.name,
     });
-
+    console.log("asd");
     await studentClass.save();
     createdStudent.classId = studentClass.id;
     await createdStudent.save();
@@ -63,4 +63,43 @@ const createStudent = async (req, res, next) => {
   });
 };
 
+const loginStudent = async (req, res, next) => {
+  let studentDetails = req.body;
+  let student;
+  try {
+    student = await Student.findOne({ email: studentDetails.email });
+  } catch {
+    const error = new HttpError("Login failed, please try again later.", 500);
+    return next(error);
+  }
+
+  if (!student) {
+    const error = new HttpError(
+      "User exists already, please login instead.",
+      500
+    );
+    return next(error);
+  }
+  let result;
+  try {
+    result = await bcrypt.compare(studentDetails.password, student.password);
+  } catch {
+    const error = new HttpError("Login failed, please try again later.", 500);
+    return next(error);
+  }
+
+  if (result) {
+    res.status(200).json({
+      code: "200",
+      email: student.email,
+      role: "student",
+    });
+  } else {
+    const error = new HttpError("Invalid Email or password.", 500);
+    return next(error);
+  }
+};
+
 exports.createStudent = createStudent;
+
+exports.loginStudent = loginStudent;

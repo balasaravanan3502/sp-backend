@@ -1,6 +1,5 @@
 const Class = require("../models/class.model");
 const HttpError = require("../models/http.error");
-const bcrypt = require("bcryptjs");
 
 const createClass = async (req, res, next) => {
   let classDetails = req.body;
