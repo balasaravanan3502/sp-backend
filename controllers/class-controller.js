@@ -27,6 +27,7 @@ const createClass = async (req, res, next) => {
   res.status(201).json({
     classId: createdClass.id,
     code: "200",
+    message: "Class Added",
   });
 };
 

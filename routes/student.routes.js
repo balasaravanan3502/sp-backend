@@ -5,8 +5,6 @@ const studentRouter = express.Router();
 
 studentRouter.post("/create-student", studentController.createStudent);
 
-studentRouter.post("/student-login", studentController.loginStudent);
-
 // studentRouter.get("/students/", (req, res, next) => {
 //   studentsService
 //     .getstudentById(req.query.id)

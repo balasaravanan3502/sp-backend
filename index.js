@@ -9,12 +9,15 @@ const staffRoutes = require("./routes/staff.routes");
 const questionRoutes = require("./routes/question.routes");
 const workRoutes = require("./routes/work.routes");
 const materialRoutes = require("./routes/material.routes");
+const authController = require("./controllers/auth-controller");
 
 const app = express();
 
 app.use(cors());
 
 app.use(express.json());
+
+app.post("/user-login", authController.loginUser);
 
 app.use("/class", classRoutes);
 

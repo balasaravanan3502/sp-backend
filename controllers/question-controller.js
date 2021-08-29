@@ -56,6 +56,7 @@ const addComment = async (req, res, next) => {
   res.status(201).json({
     code: "200",
     questionId: question.id,
+    message: "Question Added",
   });
 };
 

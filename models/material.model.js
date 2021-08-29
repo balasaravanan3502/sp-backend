@@ -8,7 +8,7 @@ const materialSchema = new Schema(
     subjectName: { type: String, required: true },
     materialLink: { type: String, required: true },
     uploadedBy: { type: Object, required: true },
-    accepted: { type: Boolean },
+    accepted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
