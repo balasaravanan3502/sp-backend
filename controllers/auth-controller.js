@@ -9,6 +9,7 @@ const loginUser = async (req, res, next) => {
   let userDetails = req.body;
   let role;
   let user;
+
   try {
     user = await Student.findOne({ email: userDetails.email });
     role = "student";
@@ -16,6 +17,7 @@ const loginUser = async (req, res, next) => {
     const error = new HttpError("Login failed, please try again later.", 500);
     return next(error);
   }
+
   if (!user)
     try {
       user = await Staff.findOne({ email: userDetails.email });
@@ -25,14 +27,15 @@ const loginUser = async (req, res, next) => {
       return next(error);
     }
 
-  if (!user) {
-    const error = new HttpError("User does not exists already", 500);
-    return next(error);
+  if (user === null) {
+    return res.status(500).json({
+      code: "500",
+      message: "User not found",
+    });
   }
 
   let result;
   try {
-    console.log("asd");
     result = await bcrypt.compare(userDetails.password, user.password);
   } catch {
     const error = new HttpError("Login failed, please try again later.", 500);
@@ -43,12 +46,48 @@ const loginUser = async (req, res, next) => {
     res.status(200).json({
       code: "200",
       email: user.email,
+      id: user._id,
       role,
     });
   } else {
-    const error = new HttpError("Invalid Email or password.", 500);
+    const error = new HttpError("Invalid password.", 404);
     return next(error);
   }
 };
 
+const linkWithGoogle = async (req, res, next) => {
+  const { email, gmail } = req.body;
+  let user;
+  console.log(email);
+  try {
+    user = await Student.findOne({ email: email });
+    role = "student";
+  } catch {
+    const error = new HttpError("Please try again later.", 500);
+    return next(error);
+  }
+  if (!user)
+    try {
+      user = await Staff.findOne({ email: email });
+      role = "staff";
+    } catch {
+      const error = new HttpError("Please try again later.", 500);
+      return next(error);
+    }
+  console.log(user);
+  try {
+    user.gmail = gmail;
+    user.save();
+  } catch {
+    const error = new HttpError("Please try again later.", 500);
+    return next(error);
+  }
+  res.status(200).json({
+    code: "200",
+    message: "Gmail has been successfully linked",
+  });
+};
+
 exports.loginUser = loginUser;
+
+exports.linkWithGoogle = linkWithGoogle;

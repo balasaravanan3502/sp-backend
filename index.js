@@ -1,8 +1,8 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
+const authRoutes = require("./routes/auth.routes");
 const studentRoutes = require("./routes/student.routes");
 const classRoutes = require("./routes/class.routes");
 const staffRoutes = require("./routes/staff.routes");
@@ -17,7 +17,7 @@ app.use(cors());
 
 app.use(express.json());
 
-app.post("/user-login", authController.loginUser);
+app.use("/auth", authRoutes);
 
 app.use("/class", classRoutes);
 
@@ -30,6 +30,14 @@ app.use("/work", workRoutes);
 app.use("/question", questionRoutes);
 
 app.use("/material", materialRoutes);
+
+app.use((error, req, res, next) => {
+  res.status(error.code || 500);
+  res.json({
+    status: error.code,
+    message: error.message || "An unknown error occurred!",
+  });
+});
 
 mongoose
   .connect(
