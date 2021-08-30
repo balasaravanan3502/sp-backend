@@ -58,10 +58,8 @@ const loginUser = async (req, res, next) => {
 const linkWithGoogle = async (req, res, next) => {
   const { email, gmail } = req.body;
   let user;
-  console.log(email);
   try {
     user = await Student.findOne({ email: email });
-    role = "student";
   } catch {
     const error = new HttpError("Please try again later.", 500);
     return next(error);
@@ -69,7 +67,6 @@ const linkWithGoogle = async (req, res, next) => {
   if (!user)
     try {
       user = await Staff.findOne({ email: email });
-      role = "staff";
     } catch {
       const error = new HttpError("Please try again later.", 500);
       return next(error);
@@ -88,6 +85,40 @@ const linkWithGoogle = async (req, res, next) => {
   });
 };
 
+const loginWithGoogle = async (req, res) => {
+  const { gmail } = req.body;
+  let user;
+  let role;
+  try {
+    user = await Student.findOne({ gmail });
+    role = "student";
+  } catch {
+    const error = new HttpError("Please try again later.", 500);
+    return next(error);
+  }
+  if (!user)
+    try {
+      user = await Staff.findOne({ gmail });
+      role = "staff";
+    } catch {
+      const error = new HttpError("Please try again later.", 500);
+      return next(error);
+    }
+  console.log(user);
+  if (user)
+    return res.status(200).json({
+      code: "200",
+      email: user.email,
+      id: user._id,
+      role,
+    });
+  res.status(500).json({
+    code: "500",
+    message: "No Gmail has been associated",
+  });
+};
 exports.loginUser = loginUser;
 
 exports.linkWithGoogle = linkWithGoogle;
+
+exports.loginWithGoogle = loginWithGoogle;

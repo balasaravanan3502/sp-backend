@@ -2,7 +2,7 @@ const path = require("path");
 const Material = require("../models/material.model");
 const Subject = require("../models/subject.model");
 const HttpError = require("../models/http.error");
-const { PDFNet } = require("@pdftron/pdfnet-node");
+// const { PDFNet } = require("@pdftron/pdfnet-node");
 const filesPath = "./thumbnails";
 
 const addMaterial = async (req, res, next) => {
@@ -37,29 +37,29 @@ const addMaterial = async (req, res, next) => {
     const error = new HttpError("Please try again later.", 500);
     return next(error);
   }
-  try {
-    const fileLink = materialDetails.materiaLink;
-    let resp;
-    const outputPath = path.join(
-      filesPath,
-      `${materialDetails.materialName}.png`
-    );
+  // try {
+  //   const fileLink = materialDetails.materiaLink;
+  //   let resp;
+  //   const outputPath = path.join(
+  //     filesPath,
+  //     `${materialDetails.materialName}.png`
+  //   );
 
-    const main = async () => {
-      console.log(";asd");
-      const doc = await PDFNet.PDFDoc.createFromURL(fileLink);
-      await doc.initSecurityHandler();
-      const pdfdraw = await PDFNet.PDFDraw.create(92);
+  //   const main = async () => {
+  //     console.log(";asd");
+  //     const doc = await PDFNet.PDFDoc.createFromURL(fileLink);
+  //     await doc.initSecurityHandler();
+  //     const pdfdraw = await PDFNet.PDFDraw.create(92);
 
-      const currPage = await doc.getPage(1);
-      await pdfdraw.export(currPage, outputPath, "PNG");
-    };
+  //     const currPage = await doc.getPage(1);
+  //     await pdfdraw.export(currPage, outputPath, "PNG");
+  //   };
 
-    PDFNetEndpoint(main, outputPath, resp);
-  } catch (err) {
-    const error = new HttpError("Please try again later.", 500);
-    return next(error);
-  }
+  //   PDFNetEndpoint(main, outputPath, resp);
+  // } catch (err) {
+  //   const error = new HttpError("Please try again later.", 500);
+  //   return next(error);
+  // }
 
   try {
     // await createdMaterial.save();
