@@ -43,6 +43,7 @@ const createStudent = async (req, res, next) => {
     studentClass.students.push({
       id: createdStudent.id,
       name: studentDetails.name,
+      phone: studentDetails.phone,
     });
     console.log("asd");
     await studentClass.save();

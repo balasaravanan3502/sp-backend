@@ -45,12 +45,12 @@ const loginUser = async (req, res, next) => {
   if (result) {
     res.status(200).json({
       code: "200",
-      email: user.email,
       id: user._id,
+      name: user.name,
       role,
     });
   } else {
-    const error = new HttpError("Invalid password.", 404);
+    const error = new HttpError("Invalid password.", 500);
     return next(error);
   }
 };
@@ -117,6 +117,7 @@ const loginWithGoogle = async (req, res) => {
     message: "No Gmail has been associated",
   });
 };
+
 exports.loginUser = loginUser;
 
 exports.linkWithGoogle = linkWithGoogle;

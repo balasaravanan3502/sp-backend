@@ -9,13 +9,20 @@ const staffRoutes = require("./routes/staff.routes");
 const questionRoutes = require("./routes/question.routes");
 const workRoutes = require("./routes/work.routes");
 const materialRoutes = require("./routes/material.routes");
-const authController = require("./controllers/auth-controller");
+const Student = require("./models/student.model");
 
 const app = express();
 
 app.use(cors());
 
 app.use(express.json());
+
+// app.use("/", async (req, res, next) => {
+//   let users = await Student.find();
+//   res.send({
+//     users,
+//   });
+// });
 
 app.use("/auth", authRoutes);
 
@@ -34,7 +41,7 @@ app.use("/material", materialRoutes);
 app.use((error, req, res, next) => {
   res.status(error.code || 500);
   res.json({
-    status: error.code,
+    code: `${error.code}`,
     message: error.message || "An unknown error occurred!",
   });
 });

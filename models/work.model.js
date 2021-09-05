@@ -5,8 +5,9 @@ const Schema = mongoose.Schema;
 const workSchema = new Schema({
   creatorName: { type: String, required: true },
   creatorId: { type: String, required: true },
-  question: { type: Array, required: true },
-  title: { type: Array, required: true },
+  type: { type: String, required: true },
+  title: { type: String, required: true },
+  questions: { type: Array, required: true },
   unCompleted: { type: Array },
   completed: {
     type: Array,
