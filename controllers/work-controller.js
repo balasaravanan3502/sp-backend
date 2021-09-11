@@ -37,8 +37,7 @@ const workComplete = async (req, res, next) => {
   let workID = completedDetails.workID;
   let studentID = completedDetails.studentID;
   let studentName = completedDetails.studentName;
-  let Question = completedDetails.question;
-  let Answer = completedDetails.answer;
+  let answers = completedDetails.answers;
 
   let findWorkid;
   try {
@@ -49,25 +48,39 @@ const workComplete = async (req, res, next) => {
     const error = new HttpError("Work not found", 400);
     return next(error);
   }
+  let student;
+
+  try {
+    student = findWorkid.completed.filter((user) => user.id === studentID);
+  } catch {
+    const error = new HttpError("Error Try Later", 400);
+    return next(error);
+  }
+
+  if (student[0]) {
+    const error = new HttpError("Student already completed", 400);
+    return next(error);
+  }
 
   try {
     findWorkid.completed.push({
       studentId: studentID,
       studentName: studentName,
-      question: Question,
-      answer: Answer,
+      answers: answers,
     });
+
+    findWorkid.unCompleted = findWorkid.unCompleted.filter(
+      (user) => user.id !== studentID
+    );
   } catch {
-    const error = new HttpError("Work not found", 400);
+    const error = new HttpError("Error Try Later", 400);
     return next(error);
   }
 
-  const saveCompleted = Work(findWorkid);
-  await saveCompleted.save();
+  await findWorkid.save();
 
   return res.status(200).json({
     code: 200,
-    studentId: saveCompleted.completed,
   });
 };
 
@@ -89,6 +102,8 @@ const getWorks = async (req, res, next) => {
     });
   }
 
+  let data = [];
+
   try {
     works = await Work.find({
       class: userDetails.class,
@@ -97,21 +112,27 @@ const getWorks = async (req, res, next) => {
     works.forEach((work) => {
       let completed = [];
       let unCompleted = [];
-      work.completed.forEach((doc) => completed.push(doc.name));
-      work.unCompleted.forEach((doc) => unCompleted.push(doc.name));
+      work.completed.forEach((doc) => completed.push(doc.studentId));
+      work.unCompleted.forEach((doc) => unCompleted.push(doc.studentId));
+
+      let isCompleted = completed.includes(req.body.id);
+      let completedData = work.completed.filter(
+        (doc) => doc.studentId === req.body.id
+      );
 
       work.completed = completed;
       work.unCompleted = unCompleted;
-      console.log(work);
-      return work;
+      data.push({ ...work._doc, isCompleted, completedData: completedData[0] });
     });
   } catch {
     const error = new HttpError("Please try again later", 400);
     return next(error);
   }
+
+  console.log(data);
   return res.status(200).json({
     code: 200,
-    data: works,
+    data: data,
   });
 };
 

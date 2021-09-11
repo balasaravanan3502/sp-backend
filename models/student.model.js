@@ -7,7 +7,7 @@ const studentSchema = new Schema({
   email: { type: String, required: true },
   regNo: { type: String, required: true },
   password: { type: String, required: true },
-  className: { type: String, required: true },
+  class: { type: String, required: true },
   classId: { type: String },
   gmail: { type: String },
   phone: { type: String },

@@ -26,7 +26,7 @@ const loginUser = async (req, res, next) => {
       const error = new HttpError("Login failed, please try again later.", 500);
       return next(error);
     }
-
+  console.log(user);
   if (user === null) {
     return res.status(500).json({
       code: "500",
@@ -48,6 +48,7 @@ const loginUser = async (req, res, next) => {
       id: user._id,
       name: user.name,
       role,
+      class: user.class,
     });
   } else {
     const error = new HttpError("Invalid password.", 500);

@@ -61,9 +61,9 @@ const staffJoinClass = async (req, res, next) => {
   try {
     isClass = await Class.findOne({ name: staffDetails.className });
     staff = await Staff.findById(staffDetails.id);
-    let classes = staff.classes;
+    let classes = staff.class;
     if (!classes.includes(isClass.id) & !isClass.staff.includes(staff.id)) {
-      staff.classes.push(isClass.id);
+      staff.class.push(isClass.id);
 
       isClass.staff.push(staff.id);
 

@@ -10,10 +10,7 @@ const createStudent = async (req, res, next) => {
   try {
     isNewStudent = await Student.findOne({ email: studentDetails.email });
   } catch {
-    const error = new HttpError(
-      "Signing up failed, please try again later.",
-      500
-    );
+    const error = new HttpError("Please try again later.", 500);
     return next(error);
   }
 
@@ -29,25 +26,22 @@ const createStudent = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     studentDetails.password = await bcrypt.hash(studentDetails.password, salt);
   } catch (err) {
-    const error = new HttpError(
-      "Signing up failed, please try again later.",
-      500
-    );
+    const error = new HttpError("Please try again later.", 500);
     return next(error);
   }
 
   const createdStudent = Student(studentDetails);
   let studentClass;
   try {
-    studentClass = await Class.findOne({ name: studentDetails.className });
+    studentClass = await Class.findOne({ name: studentDetails.class });
     studentClass.students.push({
       id: createdStudent.id,
       name: studentDetails.name,
       phone: studentDetails.phone,
     });
-    console.log("asd");
+
     await studentClass.save();
-    createdStudent.classId = studentClass.id;
+    createdStudent.classId = studentClass._id;
     await createdStudent.save();
   } catch (err) {
     const error = new HttpError(
