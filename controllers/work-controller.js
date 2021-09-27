@@ -1,6 +1,8 @@
 const HttpError = require("../models/http.error");
 const Work = require("../models/work.model");
 const Class = require("../models/class.model");
+const nodemailer = require("nodemailer");
+const Excel = require("exceljs");
 
 const createWork = async (req, res, next) => {
   let workDetails = req.body;
@@ -80,7 +82,7 @@ const workComplete = async (req, res, next) => {
   await findWorkid.save();
 
   return res.status(200).json({
-    code: 200,
+    code: "200",
   });
 };
 
@@ -136,8 +138,83 @@ const getWorks = async (req, res, next) => {
   });
 };
 
+const sendMail = async (req, res, next) => {
+  let id = req.body.workId;
+  let work;
+
+  try {
+    work = await Work.findById(id);
+  } catch {
+    const error = new HttpError("Please try again later.", 500);
+    return next(error);
+  }
+  let excelData = [];
+  if (work.completed.length === 0) {
+    return res.status(200).json({
+      code: 200,
+      response: "No data to send",
+    });
+  } else {
+    console.log(work);
+
+    let questions = work.questions.map((question, index) => {
+      return { header: question.question, key: index + 1 };
+    });
+    questions.unshift({ header: "Name", key: 0 });
+
+    let answers = [];
+    work.completed.forEach((student) => {
+      let studentAnswer = student.answers.map((answer, index) => {
+        return { [index + 1]: answer.answer };
+      });
+      answers.push({ 0: "student.studentName", ...studentAnswer });
+    });
+
+    const filename = `${work.title}.xlsx`;
+    let workbook = new Excel.Workbook();
+    let worksheet = workbook.addWorksheet(work.title);
+
+    worksheet.columns = questions;
+
+    answers.forEach((e) => {
+      worksheet.addRow(e);
+    });
+    const buffer = await workbook.xlsx.writeBuffer();
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      auth: {
+        user: "equizz123@gmail.com",
+        pass: "QWER1234!12341",
+      },
+    });
+    const mailOptions = {
+      from: "equizz123@gmail.com",
+      to: "balasaravananvp35@gmail.com",
+      subject: "subject",
+      html: "content",
+      attachments: [
+        {
+          filename,
+          content: buffer,
+          contentType:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        },
+      ],
+    };
+    await transporter.sendMail(mailOptions).then((res) => console.log(res));
+
+    return res.status(200).json({
+      code: 200,
+      response: "Mail sent successfully",
+    });
+  }
+};
+
 exports.createWork = createWork;
 
 exports.workComplete = workComplete;
 
 exports.getWorks = getWorks;
+
+exports.sendMail = sendMail;
