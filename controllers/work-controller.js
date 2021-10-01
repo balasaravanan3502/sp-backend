@@ -65,11 +65,18 @@ const workComplete = async (req, res, next) => {
   }
 
   try {
-    findWorkid.completed.push({
-      studentId: studentID,
-      studentName: studentName,
-      answers: answers,
-    });
+    if (findWorkid.type === "quiz")
+      findWorkid.completed.push({
+        studentId: studentID,
+        studentName: studentName,
+        score: completedDetails.score,
+      });
+    else
+      findWorkid.completed.push({
+        studentId: studentID,
+        studentName: studentName,
+        answers: answers,
+      });
 
     findWorkid.unCompleted = findWorkid.unCompleted.filter(
       (user) => user.id !== studentID

@@ -14,6 +14,8 @@ const workSchema = new Schema({
   },
   lastDate: { type: String, required: true },
   class: { type: String, required: true },
+  options: { type: Array },
+  correctOptions: { type: Array },
 });
 
 module.exports = mongoose.model("Work", workSchema);

@@ -48,6 +48,7 @@ const loginUser = async (req, res, next) => {
       id: user._id,
       name: user.name,
       role,
+      email: user.email,
       class: user.class,
     });
   } else {
@@ -90,6 +91,7 @@ const loginWithGoogle = async (req, res) => {
   const { gmail } = req.body;
   let user;
   let role;
+  console.log(gmail);
   try {
     user = await Student.findOne({ gmail });
     role = "student";
@@ -112,6 +114,8 @@ const loginWithGoogle = async (req, res) => {
       email: user.email,
       id: user._id,
       role,
+      name: user.name,
+      class: user.class,
     });
   res.status(500).json({
     code: "500",
