@@ -9,7 +9,6 @@ const staffRoutes = require("./routes/staff.routes");
 const questionRoutes = require("./routes/question.routes");
 const workRoutes = require("./routes/work.routes");
 const materialRoutes = require("./routes/material.routes");
-const Student = require("./models/student.model");
 
 const app = express();
 

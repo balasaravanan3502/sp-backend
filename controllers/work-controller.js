@@ -1,8 +1,10 @@
 const HttpError = require("../models/http.error");
 const Work = require("../models/work.model");
 const Class = require("../models/class.model");
+const Staff = require("../models/staff.model");
 const nodemailer = require("nodemailer");
 const Excel = require("exceljs");
+const fs = require("fs");
 
 const createWork = async (req, res, next) => {
   let workDetails = req.body;
@@ -65,18 +67,15 @@ const workComplete = async (req, res, next) => {
   }
 
   try {
-    if (findWorkid.type === "quiz")
-      findWorkid.completed.push({
-        studentId: studentID,
-        studentName: studentName,
-        score: completedDetails.score,
-      });
-    else
-      findWorkid.completed.push({
-        studentId: studentID,
-        studentName: studentName,
-        answers: answers,
-      });
+    findWorkid.completed.push({
+      studentId: studentID,
+      studentName: studentName,
+      answers: answers,
+    });
+
+    findWorkid.completed = findWorkid.completed.sort((a, b) =>
+      a.studentName > b.studentName ? 1 : b.studentName > a.studentName ? -1 : 0
+    );
 
     findWorkid.unCompleted = findWorkid.unCompleted.filter(
       (user) => user.id !== studentID
@@ -164,17 +163,26 @@ const sendMail = async (req, res, next) => {
   } else {
     console.log(work);
 
-    let questions = work.questions.map((question, index) => {
-      return { header: question.question, key: index + 1 };
-    });
-    questions.unshift({ header: "Name", key: 0 });
+    let questions;
 
+    if (work.type === "quiz") {
+      questions = [{ header: "Score", key: 1 }];
+    } else {
+      questions = work.questions.map((question, index) => {
+        return { header: question.question, key: index + 1 };
+      });
+    }
+
+    questions.unshift({ header: "Name", key: "0" });
     let answers = [];
     work.completed.forEach((student) => {
+      console.log(student);
       let studentAnswer = student.answers.map((answer, index) => {
-        return { [index + 1]: answer.answer };
+        return answer.answer;
       });
-      answers.push({ 0: "student.studentName", ...studentAnswer });
+
+      studentAnswer.unshift(student.studentName);
+      answers.push({ ...studentAnswer });
     });
 
     const filename = `${work.title}.xlsx`;
@@ -182,11 +190,28 @@ const sendMail = async (req, res, next) => {
     let worksheet = workbook.addWorksheet(work.title);
 
     worksheet.columns = questions;
-
+    console.log(answers);
     answers.forEach((e) => {
       worksheet.addRow(e);
     });
+
     const buffer = await workbook.xlsx.writeBuffer();
+
+    let staff;
+    console.log(work.creatorId);
+    try {
+      staff = await Staff.findById(work.creatorId);
+    } catch (e) {
+      console.log(e);
+      const error = new HttpError("Please try again later2.", 500);
+      return next(error);
+    }
+
+    if (!staff) {
+      const error = new HttpError("Staff email not found", 500);
+      return next(error);
+    }
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       host: "smtp.gmail.com",
@@ -197,9 +222,9 @@ const sendMail = async (req, res, next) => {
     });
     const mailOptions = {
       from: "equizz123@gmail.com",
-      to: "balasaravananvp35@gmail.com",
+      to: staff.email,
       subject: "subject",
-      html: "content",
+      html: `${work.title} student response`,
       attachments: [
         {
           filename,
@@ -209,10 +234,21 @@ const sendMail = async (req, res, next) => {
         },
       ],
     };
-    await transporter.sendMail(mailOptions).then((res) => console.log(res));
+    fs.writeFileSync(filename, buffer, "buffer", (err) => {
+      if (err) {
+        console.log("writeFileSync :", err);
+      }
+      console.log(filename + " file is saved!");
+    });
+    try {
+      await transporter.sendMail(mailOptions).then((res) => console.log(res));
+    } catch (e) {
+      const error = new HttpError("Please try again later3.", 500);
+      return next(error);
+    }
 
     return res.status(200).json({
-      code: 200,
+      code: "200",
       response: "Mail sent successfully",
     });
   }

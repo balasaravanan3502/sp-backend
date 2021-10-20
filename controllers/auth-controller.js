@@ -58,7 +58,8 @@ const loginUser = async (req, res, next) => {
 };
 
 const linkWithGoogle = async (req, res, next) => {
-  const { email, gmail } = req.body;
+  const email = req.body.email;
+  const gmail = req.body.gmail;
   let user;
   try {
     user = await Student.findOne({ email: email });
@@ -87,8 +88,8 @@ const linkWithGoogle = async (req, res, next) => {
   });
 };
 
-const loginWithGoogle = async (req, res) => {
-  const { gmail } = req.body;
+const loginWithGoogle = async (req, res, next) => {
+  const gmail = req.body.gmail;
   let user;
   let role;
   console.log(gmail);
@@ -123,8 +124,85 @@ const loginWithGoogle = async (req, res) => {
   });
 };
 
+const changepassword = async (req, res, next) => {
+  const { email, password } = req.body;
+  console.log(email);
+  let user;
+  try {
+    user = await Student.findOne({ email: email });
+  } catch {
+    const error = new HttpError("Please try again later.", 500);
+    return next(error);
+  }
+  if (!user)
+    try {
+      user = await Staff.findOne({ email: email });
+    } catch {
+      const error = new HttpError("Please try again later.", 500);
+      return next(error);
+    }
+  console.log(user);
+  try {
+    const salt = await bcrypt.genSalt(10);
+    let hash_password = await bcrypt.hash(password, salt);
+    user.password = hash_password;
+    user.save();
+  } catch {
+    const error = new HttpError("Please try again later.", 500);
+    return next(error);
+  }
+  console.log(user);
+  res.status(200).json({
+    code: "200",
+    message: "Password has been successfully changed",
+  });
+};
+
+const getUserByNumber = async (req, res, next) => {
+  const { number } = req.body;
+  console.log(number);
+  let user;
+  let role;
+  try {
+    user = await Student.findOne({ phone: number });
+    role = "student";
+  } catch {
+    const error = new HttpError("Please try again later.", 500);
+    return next(error);
+  }
+  if (!user)
+    try {
+      user = await Staff.findOne({ phone: number });
+      role = "staff";
+    } catch {
+      const error = new HttpError("Please try again later.", 500);
+      return next(error);
+    }
+  console.log(user);
+
+  if (!user) {
+    const error = new HttpError("Mobile number not found.", 500);
+    return next(error);
+  }
+
+  console.log(user);
+  res.status(200).json({
+    code: "200",
+    message: "User found!",
+    id: user._id,
+    name: user.name,
+    role: role,
+    email: user.email,
+    class: user.class,
+  });
+};
+
 exports.loginUser = loginUser;
 
 exports.linkWithGoogle = linkWithGoogle;
 
 exports.loginWithGoogle = loginWithGoogle;
+
+exports.changepassword = changepassword;
+
+exports.getUserByNumber = getUserByNumber;

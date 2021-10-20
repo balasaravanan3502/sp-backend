@@ -7,6 +7,7 @@ const staffSchema = new Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   class: { type: Array },
+  phone: { type: String },
   gmail: { type: String },
 });
 
