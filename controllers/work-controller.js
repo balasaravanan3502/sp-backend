@@ -216,8 +216,8 @@ const sendMail = async (req, res, next) => {
       service: "gmail",
       host: "smtp.gmail.com",
       auth: {
-        user: "equizz123@gmail.com",
-        pass: "QWER1234!12341",
+        user: "dummy@gmail.com",
+        pass: "dummydummy",
       },
     });
     const mailOptions = {
